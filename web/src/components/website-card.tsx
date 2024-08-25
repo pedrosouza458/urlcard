@@ -1,5 +1,14 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useRef } from "react";
+
+// leaving these here you know you can tweak stuff further
+const options = {
+  allowTaint: true,
+  useCORS: true,
+  backgroundColor: "rgba(0,0,0,0)",
+  removeContainer: true,
+};
 
 interface WebsiteCardProps {
   url: string;
@@ -14,6 +23,36 @@ interface WebsiteData {
 }
 
 export default function WebsiteCard({ url }: WebsiteCardProps) {
+  const cardRef = useRef<HTMLElement>(null);
+
+  const prepareURL = async () => {
+    const cardElement = cardRef.current;
+
+    if (!cardElement) return;
+
+    try {
+      // lazy load this package
+      const html2canvas = await import(
+        /* webpackPrefetch: true */ "html2canvas"
+      );
+
+      const result = await html2canvas.default(cardElement, options);
+
+      const asURL = result.toDataURL("image/jpeg");
+      // as far as I know this is a quick and dirty solution
+      const anchor = document.createElement("a");
+      anchor.href = asURL;
+      anchor.download = "your-card.jpeg";
+      anchor.click();
+      anchor.remove();
+     // maybe this part should set state with `setURLData(asURL)`
+     // and when that's set to something you show the download button 
+     // which has `href=URLData`, so that people can click on it
+    } catch (reason) {
+      console.log(reason);
+    }
+  };
+
   const [data, setData] = useState<WebsiteData | null>(null);
 
   useEffect(() => {
@@ -30,9 +69,13 @@ export default function WebsiteCard({ url }: WebsiteCardProps) {
     fetchData();
   }, [url]);
   return (
-    <div className="p-4">
+    <div>
+      <h1 className="text-center">Card from url: {url}</h1>
+    <div className="p-4 flex justify-center">
+      <article ref={cardRef}>
       {data ? (
-        <div className="flex">
+        <div  className="flex">
+          
           <div className="bg-white w-[50rem] border-2 px-4 py-4 rounded-xl">
             <div className="flex items-center justify-center gap-2 rounded-xl">
               <Image
@@ -70,6 +113,9 @@ export default function WebsiteCard({ url }: WebsiteCardProps) {
           </div>
         </div>
       ) : <p>Loading...</p>}
+      </article>
+      {/* <button onClick={prepareURL}>Download</button> */}
+    </div>
     </div>
   );
 }

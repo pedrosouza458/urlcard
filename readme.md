@@ -3,7 +3,7 @@
 
   
 
-URLCard is a simple app to create cards with open graph data from urls, its a project to explore my another package[Go-Open-Graph-Scraper-Api](https://github.com/pedrosouza458/go-open-graph-scraper-api)
+URLCard is a simple app to create cards with open graph data from urls, its a project to explore my another package [Go-Open-Graph-Scraper-Api](https://github.com/pedrosouza458/go-open-graph-scraper-api)
 
   
 
