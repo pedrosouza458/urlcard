@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Menu } from "@/components/menu";
-
+import { ThemeProvider } from "next-themes";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,8 +18,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+      <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          disableTransitionOnChange
+        >
         <Menu/>
         {children}
+        </ThemeProvider>
         </body>
     </html>
   );

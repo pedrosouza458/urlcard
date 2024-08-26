@@ -76,17 +76,18 @@ export default function WebsiteCard({ url }: WebsiteCardProps) {
       {data ? (
         <div  className="flex">
           
-          <div className="bg-white w-[50rem] border-2 px-4 py-4 rounded-xl">
+          <div className=" w-[50rem] border-2 px-4 py-4 rounded-xl dark:border-slate-800">
             <div className="flex items-center justify-center gap-2 rounded-xl">
               <Image
                 height={0}
                 width={30}
+                className="rounded-full"
                 src={data.logo ? data.logo : ""}
                 alt={data.name ? data.name : ""}
               />
               <h1 className="font-semibold">{data.name ? data.name : ""}</h1>
             </div>
-            <h1 className="my-4 border-2 p-3 rounded-xl font-semibold text-2xl overflow-hidden text-ellipsis whitespace-nowrap">
+            <h1 className="my-4 border-2 dark:border-slate-800 p-3 rounded-xl font-semibold text-xl overflow-hidden text-ellipsis whitespace-nowrap">
               {data.title}
             </h1>
             <div className="flex gap-4 rounded-xl">
@@ -102,10 +103,10 @@ export default function WebsiteCard({ url }: WebsiteCardProps) {
                 />
               </div>
               <div className="flex-grow flex flex-col gap-3">
-                <div className="border-2 p-3 h-full rounded-xl flex-grow">
+                <div className="border-2 dark:border-slate-800 p-3 h-full rounded-xl flex-grow">
                   {data.description ? data.description : ""}
                 </div>
-                <div className="border-2 rounded-xl p-3">
+                <div className="border-2 dark:border-slate-800  rounded-xl p-3">
                   Made with ❤️ by URLCard
                 </div>
               </div>
