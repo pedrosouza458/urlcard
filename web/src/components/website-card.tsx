@@ -83,12 +83,12 @@ export default function WebsiteCard({ url }: WebsiteCardProps) {
                 width={30}
                 className="rounded-full"
                 src={data.logo ? data.logo : ""}
-                alt={data.name ? data.name : ""}
+                alt={data.name ? data.name : "Website name not found, write it."}
               />
               <h1 className="font-semibold">{data.name ? data.name : ""}</h1>
             </div>
             <h1 className="my-4 border-2 dark:border-slate-800 p-3 rounded-xl font-semibold text-xl overflow-hidden text-ellipsis whitespace-nowrap">
-              {data.title}
+              {data.title ? data.title : "Title not found, write yours."} 
             </h1>
             <div className="flex gap-4 rounded-xl">
               <div className="flex-shrink-0">
@@ -104,7 +104,7 @@ export default function WebsiteCard({ url }: WebsiteCardProps) {
               </div>
               <div className="flex-grow flex flex-col gap-3">
                 <div className="border-2 dark:border-slate-800 p-3 h-full rounded-xl flex-grow">
-                  {data.description ? data.description : ""}
+                  {data.description ? data.description : "Description not found, write yours."}
                 </div>
                 <div className="border-2 dark:border-slate-800  rounded-xl p-3">
                   Made with ❤️ by URLCard
