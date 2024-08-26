@@ -18,7 +18,7 @@ export default function Card() {
 
     const url = formData.get("url");
     router.push(`/card?url=${url}`);
-    // ...
+
   }
   return (
     <div>

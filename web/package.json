@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "cal-sans": "^1.0.1",
     "html2canvas": "^1.4.1",
     "next": "14.2.6",
     "next-themes": "^0.3.0",

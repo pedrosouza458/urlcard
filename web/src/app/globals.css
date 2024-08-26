@@ -2,7 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-
+html,
+body {
+  font-family: "system-ui";
+}
 @layer base {
   :root {
     --background: 0 0% 100%;
