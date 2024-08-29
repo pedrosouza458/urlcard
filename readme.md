@@ -93,4 +93,4 @@ Now the frontend is running in port 3000.
 
 Now you can acess http://localhost:3000/card?url=yourwebsitename
 
-the project is in really early development, just some pages are supported, if you wanna check, go to [websites-json](https://github.com/pedrosouza458/go-open-graph-scraper/blob/main/utils/websites.json) in my original go package that serves the api.
+the project is in really early development, just some pages have supported icons, if you wanna check, go to [websites-json](https://github.com/pedrosouza458/go-open-graph-scraper/blob/main/utils/websites.json) in my original go package that serves the api.
