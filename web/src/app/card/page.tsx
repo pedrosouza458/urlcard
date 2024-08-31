@@ -1,97 +1,113 @@
 "use client";
 
-import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useRef, FormEvent } from "react";
-import { createSwapy } from "swapy";
-import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import {
+  SortableContext,
+  rectSortingStrategy,
+  useSortable,
+  sortableKeyboardCoordinates,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import {
+  DndContext,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
+import { LogoName } from "@/components/card/logo-name";
+import { Title } from "@/components/card/title";
+import { WebImage } from "@/components/card/image";
+import { Description } from "@/components/card/description";
+import { Footer } from "@/components/card/footer";
+import { useSearchParams } from "next/navigation";
 
-const DEFAULT: Record<string, "a" | "b" | "c" | "d" | "e"> = {
-  "1": "a",
-  "2": "b",
-  "3": "c",
-  "4": "d",
-  "5": "e",
+// Components
+const LogoNameComponent = ({ data }: { data: WebsiteData }) => (
+  <>
+    {data ? (
+      <LogoName
+        name={data.name ? data.name : "Escreva o nome"}
+        logo={
+          data.logo
+            ? data.logo
+            : "https://png.pngtree.com/png-clipart/20201029/ourmid/pngtree-circle-clipart-gray-circle-png-image_2381994.jpg"
+        }
+      />
+    ) : (
+      <p>Loading...</p>
+    )}
+  </>
+);
+const TitleComponent = ({ data }: { data: WebsiteData }) => (
+  <>
+  {data ? (
+  <Title title={data?.title || "Testing DND Kit"} />
+  ) : <p>Loading...</p>}
+  </>
+);
+const ImageComponent = ({ data }: { data: WebsiteData }) => (
+ <>
+ {data ? (
+ <WebImage
+ image={
+   data?.img ||
+   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROPbbrTRmmZ5ry2_WKv8XNPUuvv2TeegHtbA&s"
+ }
+/>
+ ) : <p>Loading...</p>}
+ </>
+ 
+);
+const DescriptionComponent = ({ data }: { data: WebsiteData }) => (
+  <>
+  {data ? (
+  <Description
+  description={data?.description || "This is the url description"}
+/>
+  ) : <p>Loading...</p>}
+  </>
+);
+const FooterComponent = () => <Footer />;
+
+// List of Components
+const componentsList = [
+  LogoNameComponent,
+  TitleComponent,
+  ImageComponent,
+  DescriptionComponent,
+  FooterComponent,
+];
+
+const getItems = () => {
+  return componentsList.map((Component, index) => ({
+    id: index + 1,
+    component: Component,
+  }));
 };
 
-export default dynamic(() => Promise.resolve(App), {
-  ssr: false,
-});
-function A({ data }: { data: WebsiteData }) {
-  return (
-    <div className="item a" data-swapy-item="a">
-      {data ? (
-        <div className="flex items-center justify-center gap-2 rounded-xl">
-          <Image
-            alt="teste"
-            height={0}
-            width={30}
-            className="rounded-full"
-            src={data.logo ? data.logo : ""}
-          />
-          <h1 className="font-semibold">{data.name}</h1>
-        </div>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </div>
-  );
-}
+const SortableItem = ({ id, component: Component, style, data }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
+  const combinedStyle = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
-function B({ data }: { data: WebsiteData }) {
   return (
-    <div className="item b w-full h-full" data-swapy-item="b">
-      {data ? (
-        <h1 className="my-4 h-full w-full border-2 dark:border-slate-800 p-3 rounded-xl font-semibold text-xl overflow-hidden text-ellipsis whitespace-nowrap">
-          {data.title}
-        </h1>
-      ) : (
-        <p>Loading</p>
-      )}
+    <div
+      ref={setNodeRef}
+      style={combinedStyle}
+      className={`p-4 border-2 border-blue-400 dark:border-blue-300 ${style}`}
+      {...attributes}
+      {...listeners}
+    >
+      <Component data={data} /> {/* Pass the data as a prop to the component */}
     </div>
   );
-}
+};
 
-function C({ data }: { data: WebsiteData }) {
-  return (
-    <div className="item c" data-swapy-item="c">
-      {data ? (
-        <div className="flex-shrink-0">
-          <img
-            className="rounded-lg h-72 w-full object-cover"
-            src={data.img}
-            alt=""
-          />
-        </div>
-      ) : (
-        <p>Loading</p>
-      )}
-    </div>
-  );
-}
-function D({ data }: { data: WebsiteData }) {
-  return (
-    <div className="item d flex-grow h-full" data-swapy-item="d">
-      {data ? (
-        <div className="border-2 dark:border-slate-800 p-3 rounded-xl h-full w-full">
-          {data.description}
-        </div>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </div>
-  );
-}
-
-function E() {
-  return (
-    <div className="item e flex-grow h-full" data-swapy-item="e">
-      <div className="border-2 dark:border-slate-800 rounded-xl p-3 h-full w-full">
-        Made with ❤️ by URLCard
-      </div>
-    </div>
-  );
-}
 interface WebsiteData {
   logo?: string;
   name?: string;
@@ -100,30 +116,19 @@ interface WebsiteData {
   description?: string;
 }
 
-function getItemById(
-  itemId: "a" | "b" | "c" | "d" | "e" | null,
-  data: WebsiteData | null
-) {
-  switch (itemId) {
-    case "a":
-      return <A data={data} />;
-    case "b":
-      return <B data={data} />;
-    case "c":
-      return <C data={data} />;
-    case "d":
-      return <D data={data} />;
-    case "e":
-      return <E />;
-    default:
-      return null;
-  }
-}
-
 function App() {
+  const [items, setItems] = useState(getItems());
   const [data, setData] = useState<WebsiteData | null>(null);
   const searchParams = useSearchParams();
   const url = searchParams.get("url");
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   useEffect(() => {
     if (!url) return;
 
@@ -142,67 +147,55 @@ function App() {
     fetchData();
   }, [url]);
 
-  const slotItems: Record<string, "a" | "c" | "d" | null> =
-    localStorage.getItem("slotItem")
-      ? JSON.parse(localStorage.getItem("slotItem")!)
-      : DEFAULT;
-  useEffect(() => {
-    const container = document.querySelector(".container")!;
-    const swapy = createSwapy(container);
-    swapy.onSwap(({ data }) => {
-      localStorage.setItem("slotItem", JSON.stringify(data.object));
+  const handleDragEnd = ({ active, over }) => {
+    if (!over) {
+      return;
+    }
+
+    if (active.id === over.id) {
+      return;
+    }
+
+    setItems((items) => {
+      const oldIndex = items.findIndex((it) => it.id === active.id);
+      const newIndex = items.findIndex((it) => it.id === over.id);
+
+      return arrayMove(items, oldIndex, newIndex);
     });
-  }, []);
-  const router = useRouter();
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  };
 
-    const formData = new FormData(event.currentTarget);
+  const styleMap: { [key: number]: string } = {
+    0: "col-span-2 row-span-2",
+    1: "col-span-3 row-span-2",
+    2: "col-span-1 row-span-2",
+    3: "col-span-1 row-span-1",
+    4: "col-span-2 row-span-1",
+  };
 
-    const url = formData.get("url");
-    router.push(`/card?url=${url}`);
-    // ...
-  }
   return (
-    <div className="flex justify-center">
-      <div className="container w-[50rem] border-2 px-4 py-4 rounded-xl dark:border-slate-800">
-        <div className="slot a" data-swapy-slot="1">
-          {getItemById(slotItems["1"], data)}
-        </div>
-        <div className="slot b" data-swapy-slot="2">
-          {getItemById(slotItems["2"], data)}
-        </div>
-        <div className="flex gap-4 rounded-xl">
-          <div className="slot c" data-swapy-slot="3">
-            {getItemById(slotItems["3"], data)}
+    <div>
+      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <SortableContext
+          items={items.map((item) => item.id)}
+          strategy={rectSortingStrategy}
+        >
+          <div className="flex justify-center">
+          <div className="grid grid-cols-2 grid-rows-2 gap-4 w-[54rem] ">
+            {items.map((item, index) => (
+              <SortableItem
+                key={item.id}
+                id={item.id}
+                component={item.component}
+                style={styleMap[index]}
+                data={data} // Pass the fetched data to SortableItem
+              />
+            ))}
           </div>
-          <div className="flex-grow flex flex-col gap-3">
-            <div className="slot d flex-grow" data-swapy-slot="4">
-              {getItemById(slotItems["4"], data)}
-            </div>
-
-            <div className="slot e" data-swapy-slot="5">
-              {getItemById(slotItems["5"], data)}
-            </div>
           </div>
-        </div>
-      </div>
-      <div className="flex justify-center flex-row gap-3">
-        <form onSubmit={onSubmit}>
-          <input
-            className="bg-slate-100 dark:bg-slate-800 w-96 p-4 rounded-xl"
-            name="url"
-            type="text"
-            placeholder="Place you url"
-          />
-          <button
-            type="submit"
-            className="p-4 bg-black text-white dark:bg-white dark:text-black rounded-xl"
-          >
-            Create card
-          </button>
-        </form>
-      </div>
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }
+
+export default App;

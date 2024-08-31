@@ -7,7 +7,7 @@ export function WebImage({ image }: imageProps) {
     <div className="item c" data-swapy-item="c">
     {image ? (
       <div className="flex-shrink-0">
-        <img className="rounded-lg h-72 w-full object-cover" src={image} alt="" />
+        <img className="rounded-lg h-80 w-full object-cover" src={image} alt="" />
       </div>
     ) : (
       <p>Loading</p>
