@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, useRef, FormEvent } from "react";
 import { createSwapy } from "swapy";
 import dynamic from "next/dynamic";
 
@@ -20,7 +20,6 @@ export default dynamic(() => Promise.resolve(App), {
 function A({ data }: { data: WebsiteData }) {
   return (
     <div className="item a" data-swapy-item="a">
-   
       {data ? (
         <div className="flex items-center justify-center gap-2 rounded-xl">
           <Image
@@ -34,8 +33,7 @@ function A({ data }: { data: WebsiteData }) {
         </div>
       ) : (
         <p>Loading...</p>
-      )} 
-
+      )}
     </div>
   );
 }
@@ -43,7 +41,6 @@ function A({ data }: { data: WebsiteData }) {
 function B({ data }: { data: WebsiteData }) {
   return (
     <div className="item b w-full h-full" data-swapy-item="b">
-
       {data ? (
         <h1 className="my-4 h-full w-full border-2 dark:border-slate-800 p-3 rounded-xl font-semibold text-xl overflow-hidden text-ellipsis whitespace-nowrap">
           {data.title}
@@ -75,7 +72,6 @@ function C({ data }: { data: WebsiteData }) {
 function D({ data }: { data: WebsiteData }) {
   return (
     <div className="item d flex-grow h-full" data-swapy-item="d">
-
       {data ? (
         <div className="border-2 dark:border-slate-800 p-3 rounded-xl h-full w-full">
           {data.description}
@@ -90,11 +86,9 @@ function D({ data }: { data: WebsiteData }) {
 function E() {
   return (
     <div className="item e flex-grow h-full" data-swapy-item="e">
-    
-        <div className="border-2 dark:border-slate-800 rounded-xl p-3 h-full w-full">
-          Made with ❤️ by URLCard
-        </div>
-
+      <div className="border-2 dark:border-slate-800 rounded-xl p-3 h-full w-full">
+        Made with ❤️ by URLCard
+      </div>
     </div>
   );
 }
@@ -120,7 +114,7 @@ function getItemById(
     case "d":
       return <D data={data} />;
     case "e":
-      return <E/>;
+      return <E />;
     default:
       return null;
   }
@@ -148,20 +142,30 @@ function App() {
     fetchData();
   }, [url]);
 
-  const slotItems: Record<string, 'a' | 'c' | 'd' | null> = localStorage.getItem('slotItem') ? JSON.parse(localStorage.getItem('slotItem')!) : DEFAULT
+  const slotItems: Record<string, "a" | "c" | "d" | null> =
+    localStorage.getItem("slotItem")
+      ? JSON.parse(localStorage.getItem("slotItem")!)
+      : DEFAULT;
   useEffect(() => {
-    const container = document.querySelector('.container')!
-    const swapy = createSwapy(container)
+    const container = document.querySelector(".container")!;
+    const swapy = createSwapy(container);
     swapy.onSwap(({ data }) => {
-      localStorage.setItem('slotItem', JSON.stringify(data.object))
-    })
-  }, [])
+      localStorage.setItem("slotItem", JSON.stringify(data.object));
+    });
+  }, []);
+  const router = useRouter();
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
+    const formData = new FormData(event.currentTarget);
+
+    const url = formData.get("url");
+    router.push(`/card?url=${url}`);
+    // ...
+  }
   return (
     <div className="flex justify-center">
-      <div
-        className="container w-[50rem] border-2 px-4 py-4 rounded-xl dark:border-slate-800"
-      >
+      <div className="container w-[50rem] border-2 px-4 py-4 rounded-xl dark:border-slate-800">
         <div className="slot a" data-swapy-slot="1">
           {getItemById(slotItems["1"], data)}
         </div>
@@ -182,6 +186,22 @@ function App() {
             </div>
           </div>
         </div>
+      </div>
+      <div className="flex justify-center flex-row gap-3">
+        <form onSubmit={onSubmit}>
+          <input
+            className="bg-slate-100 dark:bg-slate-800 w-96 p-4 rounded-xl"
+            name="url"
+            type="text"
+            placeholder="Place you url"
+          />
+          <button
+            type="submit"
+            className="p-4 bg-black text-white dark:bg-white dark:text-black rounded-xl"
+          >
+            Create card
+          </button>
+        </form>
       </div>
     </div>
   );
