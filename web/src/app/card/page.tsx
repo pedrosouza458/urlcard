@@ -42,31 +42,36 @@ const LogoNameComponent = ({ data }: { data: WebsiteData }) => (
 );
 const TitleComponent = ({ data }: { data: WebsiteData }) => (
   <>
-  {data ? (
-  <Title title={data?.title || "Testing DND Kit"} />
-  ) : <p>Loading...</p>}
+    {data ? (
+      <Title title={data?.title || "Testing DND Kit"} />
+    ) : (
+      <p>Loading...</p>
+    )}
   </>
 );
 const ImageComponent = ({ data }: { data: WebsiteData }) => (
- <>
- {data ? (
- <WebImage
- image={
-   data?.img ||
-   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROPbbrTRmmZ5ry2_WKv8XNPUuvv2TeegHtbA&s"
- }
-/>
- ) : <p>Loading...</p>}
- </>
- 
+  <>
+    {data ? (
+      <WebImage
+        image={
+          data?.img ||
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROPbbrTRmmZ5ry2_WKv8XNPUuvv2TeegHtbA&s"
+        }
+      />
+    ) : (
+      <p>Loading...</p>
+    )}
+  </>
 );
 const DescriptionComponent = ({ data }: { data: WebsiteData }) => (
   <>
-  {data ? (
-  <Description
-  description={data?.description || "This is the url description"}
-/>
-  ) : <p>Loading...</p>}
+    {data ? (
+      <Description
+        description={data?.description || "This is the url description"}
+      />
+    ) : (
+      <p>Loading...</p>
+    )}
   </>
 );
 const FooterComponent = () => <Footer />;
@@ -180,17 +185,17 @@ function App() {
           strategy={rectSortingStrategy}
         >
           <div className="flex justify-center">
-          <div className="grid grid-cols-2 grid-rows-2 gap-4 w-[54rem] ">
-            {items.map((item, index) => (
-              <SortableItem
-                key={item.id}
-                id={item.id}
-                component={item.component}
-                style={styleMap[index]}
-                data={data} // Pass the fetched data to SortableItem
-              />
-            ))}
-          </div>
+            <div className="grid grid-cols-2 grid-rows-2  w-[54rem] ">
+              {items.map((item, index) => (
+                <SortableItem
+                  key={item.id}
+                  id={item.id}
+                  component={item.component}
+                  style={styleMap[index]}
+                  data={data} // Pass the fetched data to SortableItem
+                />
+              ))}
+            </div>
           </div>
         </SortableContext>
       </DndContext>
